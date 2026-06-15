@@ -11,12 +11,12 @@ const manifestPath = path.join(rootDir, "app", "data", "image-manifest.json");
 const datasets = [
   {
     id: "output",
-    label: "output",
+    label: "Version Psi",
     sourceDir: path.join(rootDir, "output")
   },
   {
     id: "output_41288611",
-    label: "output_41288611",
+    label: "Version Xi",
     sourceDir: path.join(rootDir, "output_41288611")
   }
 ];

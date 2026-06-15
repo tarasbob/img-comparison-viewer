@@ -38,11 +38,25 @@ function normalize(value: string) {
   return value.toLowerCase().trim();
 }
 
+function shuffleImages(images: ManifestImage[]) {
+  const shuffledImages = [...images];
+
+  for (let index = shuffledImages.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffledImages[index], shuffledImages[swapIndex]] = [shuffledImages[swapIndex], shuffledImages[index]];
+  }
+
+  return shuffledImages;
+}
+
 export default function ImageViewer({ manifest }: ImageViewerProps) {
   const [selectedDatasetId, setSelectedDatasetId] = useState(manifest.datasets[0]?.id ?? "");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [query, setQuery] = useState("");
   const [loadedImageUrl, setLoadedImageUrl] = useState("");
+  const [randomizedImagesByDataset, setRandomizedImagesByDataset] = useState<
+    Record<string, ManifestImage[]> | null
+  >(null);
 
   const selectedDataset = useMemo(
     () => manifest.datasets.find((dataset) => dataset.id === selectedDatasetId) ?? manifest.datasets[0],
@@ -50,7 +64,9 @@ export default function ImageViewer({ manifest }: ImageViewerProps) {
   );
 
   const filteredImages = useMemo(() => {
-    const images = selectedDataset?.images ?? [];
+    const images = selectedDataset
+      ? (randomizedImagesByDataset?.[selectedDataset.id] ?? selectedDataset.images)
+      : [];
     const normalizedQuery = normalize(query);
 
     if (!normalizedQuery) {
@@ -62,7 +78,7 @@ export default function ImageViewer({ manifest }: ImageViewerProps) {
         normalizedQuery
       )
     );
-  }, [query, selectedDataset]);
+  }, [query, randomizedImagesByDataset, selectedDataset]);
 
   const boundedIndex = Math.min(selectedIndex, Math.max(filteredImages.length - 1, 0));
   const currentImage = filteredImages[boundedIndex];
@@ -94,6 +110,16 @@ export default function ImageViewer({ manifest }: ImageViewerProps) {
     },
     [filteredImages.length]
   );
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setRandomizedImagesByDataset(
+        Object.fromEntries(manifest.datasets.map((dataset) => [dataset.id, shuffleImages(dataset.images)]))
+      );
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [manifest.datasets]);
 
   useEffect(() => {
     if (!currentImage || filteredImages.length < 2) {

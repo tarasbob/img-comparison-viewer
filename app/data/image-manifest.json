@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-15T04:11:48.637Z",
+  "generatedAt": "2026-06-15T04:25:04.114Z",
   "datasets": [
     {
       "id": "output",
-      "label": "output",
+      "label": "Version Psi",
       "sourceFolder": "output",
       "resultCount": 59,
       "imageCount": 59,
@@ -485,7 +485,7 @@
     },
     {
       "id": "output_41288611",
-      "label": "output_41288611",
+      "label": "Version Xi",
       "sourceFolder": "output_41288611",
       "resultCount": 25,
       "imageCount": 25,
